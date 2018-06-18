@@ -11,8 +11,8 @@ config.read('config.ini')
 
 # Read config from config.ini file.
 site_json_path = config.get('main', 'site_json_path')
-wordpress_rss_path = config.get('main', 'wordpress_rss_path')
-
+wordpress_rss_path = config.get('sync_from_rss', 'wordpress_rss_path')
+update_flag = False
 
 if not site_json_path or not wordpress_rss_path:
     print('Please read README.md and edit config.ini first!')
@@ -44,7 +44,11 @@ for idx,item in enumerate(items):
             "body": post_body}
     posts.insert(0, post)
     current_post_id += 1
+    update_flag = True
 
 site_json['next_post_id'] = current_post_id
 open(site_json_path, 'wb').write(json.dumps(site_json, ensure_ascii=False, indent="\t").encode())
-print('Good! Convert Finished, Please sign site and published, then refresh the page, you will see your WordPress post')
+if update_flag:
+    print("New post found, TRUE flag.")
+else:
+    print("No new posts.")
